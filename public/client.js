@@ -1,4 +1,4 @@
-// client.js - improved UI/UX
+// client.js - improved UI/UX with forced reveal request
 const socket = io();
 
 const createBtn = document.getElementById('createBtn');
@@ -209,6 +209,15 @@ socket.on('startCountdown', (seconds) => {
       countdown.textContent = '0';
       clearInterval(t);
       countdown.style.transform = 'scale(1.05)';
+      // AFTER countdown reaches zero, ask server to reveal (if server did not already)
+      if (currentRoom) {
+        socket.emit('requestReveal', currentRoom, (res) => {
+          // if server responds with error, show message (optional)
+          if (!res || !res.ok) {
+            console.log('requestReveal failed', res && res.error);
+          }
+        });
+      }
     } else {
       countdown.textContent = s;
       countdown.style.transform = 'scale(1.1)';

@@ -90,10 +90,12 @@ io.on('connection', socket => {
         io.to(roomId).emit('startCountdown', 3); // 3 seconds
         // after 3 seconds, reveal both secrets together
         setTimeout(() => {
+          // prepare mapping name->secret
           const reveal = playerIds.map(id => ({
             name: room.players[id].name || 'Player',
             secret: room.players[id].secret
           }));
+          console.log('Emitting reveal for room', roomId);
           io.to(roomId).emit('reveal', reveal);
           // reset readiness so next round needs re-ready
           playerIds.forEach(id => { if (room.players[id]) room.players[id].ready = false; });
@@ -101,6 +103,27 @@ io.on('connection', socket => {
         }, 3000);
       }
     }
+    cb && cb({ ok: true });
+  });
+
+  // NEW: allow client to request reveal if countdown finished but reveal not received
+  socket.on('requestReveal', (roomId, cb) => {
+    const room = rooms[roomId];
+    if (!room) return cb && cb({ ok: false, error: 'Room not found' });
+    const playerIds = Object.keys(room.players);
+    if (playerIds.length !== 2) return cb && cb({ ok: false, error: 'Need two players' });
+    const bothHaveSecret = playerIds.every(id => typeof room.players[id].secret === 'string' && room.players[id].secret.length > 0);
+    if (!bothHaveSecret) return cb && cb({ ok: false, error: 'Secrets missing' });
+
+    const reveal = playerIds.map(id => ({
+      name: room.players[id].name || 'Player',
+      secret: room.players[id].secret
+    }));
+    console.log('requestReveal -> emitting reveal for room', roomId);
+    io.to(roomId).emit('reveal', reveal);
+    // reset readiness
+    playerIds.forEach(id => { if (room.players[id]) room.players[id].ready = false; });
+    io.to(roomId).emit('roomUpdate', roomSummary(roomId));
     cb && cb({ ok: true });
   });
 
