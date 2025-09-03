@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Secret University Reveal</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="wrap">
+    <h1>Secret University Reveal</h1>
+
+    <div id="lobby" class="card">
+      <div class="row">
+        <button id="createBtn">Create Room</button>
+        <input id="joinCode" placeholder="Room code (e.g. AB12)" maxlength="6" />
+        <button id="joinBtn">Join Room</button>
+      </div>
+      <div class="row">
+        <input id="nameInput" placeholder="Your name (optional)" />
+      </div>
+      <p class="muted">Create a room and tell your friend the room code. Open the same URL on both devices.</p>
+    </div>
+
+    <div id="roomArea" class="card hidden">
+      <div class="row">
+        <div><strong>Room:</strong> <span id="roomCode">—</span></div>
+        <div><button id="leaveBtn">Leave</button></div>
+      </div>
+
+      <div class="row">
+        <textarea id="secretInput" placeholder="Type your secret university here"></textarea>
+      </div>
+      <div class="row">
+        <button id="setSecretBtn">Set Secret</button>
+        <button id="readyBtn">Ready</button>
+      </div>
+
+      <div id="status" class="box">
+        <div><strong>Players:</strong></div>
+        <ul id="playersList"></ul>
+      </div>
+
+      <div id="countdown" class="big hidden">3</div>
+
+      <div id="revealArea" class="box hidden">
+        <h3>Both revealed:</h3>
+        <ul id="revealList"></ul>
+      </div>
+    </div>
+
+    <div id="messages" class="muted"></div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/client.js"></script>
+</body>
+</html>
