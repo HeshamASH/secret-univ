@@ -8,48 +8,69 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>Secret University Reveal</h1>
+    <header class="top">
+      <h1>Secret University Reveal</h1>
+      <p class="muted small">Type your dream university and both reveal at the same time.</p>
+    </header>
 
-    <div id="lobby" class="card">
-      <div class="row">
-        <button id="createBtn">Create Room</button>
-        <input id="joinCode" placeholder="Room code (e.g. AB12)" maxlength="6" />
-        <button id="joinBtn">Join Room</button>
-      </div>
-      <div class="row">
-        <input id="nameInput" placeholder="Your name (optional)" />
-      </div>
-      <p class="muted">Create a room and tell your friend the room code. Open the same URL on both devices.</p>
-    </div>
+    <main>
+      <section id="lobby" class="card">
+        <div class="row">
+          <button id="createBtn" class="primary">Create Room</button>
+          <input id="joinCode" placeholder="Room code (e.g. AB12)" maxlength="6" />
+          <button id="joinBtn">Join Room</button>
+        </div>
+        <div class="row">
+          <input id="nameInput" placeholder="Your name (optional)" />
+        </div>
+        <p class="muted">Create a room and share the room code or the share button after joining.</p>
+      </section>
 
-    <div id="roomArea" class="card hidden">
-      <div class="row">
-        <div><strong>Room:</strong> <span id="roomCode">—</span></div>
-        <div><button id="leaveBtn">Leave</button></div>
-      </div>
+      <section id="roomArea" class="card hidden">
+        <div class="roomHeader row">
+          <div><strong>Room:</strong> <span id="roomCode">—</span></div>
+          <div class="smallControls">
+            <button id="copyRoomBtn">Copy</button>
+            <button id="shareRoomBtn">Share</button>
+            <button id="leaveBtn" class="danger">Leave</button>
+          </div>
+        </div>
 
-      <div class="row">
-        <textarea id="secretInput" placeholder="Type your secret university here"></textarea>
-      </div>
-      <div class="row">
-        <button id="setSecretBtn">Set Secret</button>
-        <button id="readyBtn">Ready</button>
-      </div>
+        <div class="row column">
+          <label for="secretInput" class="muted">Your secret (keeps hidden until both ready)</label>
+          <textarea id="secretInput" placeholder="Type your secret university here"></textarea>
+          <div class="row">
+            <button id="setSecretBtn">Save secret</button>
+            <button id="readyBtn" class="primary" disabled>Ready</button>
+          </div>
 
-      <div id="status" class="box">
-        <div><strong>Players:</strong></div>
-        <ul id="playersList"></ul>
-      </div>
+          <div id="mySecretBox" class="box small hidden">
+            <div><strong>Your secret:</strong> <span id="mySecretMasked">—</span></div>
+            <div class="row">
+              <button id="toggleShowMySecret">Show</button>
+              <button id="editSecretBtn">Edit</button>
+            </div>
+          </div>
+        </div>
 
-      <div id="countdown" class="big hidden">3</div>
+        <div id="status" class="box">
+          <div class="row">
+            <strong>Players</strong>
+            <span class="muted small"> (who is in the room)</span>
+          </div>
+          <ul id="playersList"></ul>
+        </div>
 
-      <div id="revealArea" class="box hidden">
-        <h3>Both revealed:</h3>
-        <ul id="revealList"></ul>
-      </div>
-    </div>
+        <div id="countdown" class="big hidden">3</div>
 
-    <div id="messages" class="muted"></div>
+        <div id="revealArea" class="box hidden">
+          <h3>Both revealed:</h3>
+          <ul id="revealList"></ul>
+        </div>
+      </section>
+
+      <div id="messages" class="toast muted"></div>
+    </main>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
