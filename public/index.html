@@ -1,76 +1,312 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Secret University Reveal</title>
+  <title>Dream University Secret Reveal</title>
   <link rel="stylesheet" href="/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#6366F1">
+  <meta name="description" content="Share your dream universities with friends - synchronized reveal game">
 </head>
 <body>
-  <div class="wrap">
-    <header class="top">
-      <h1>Secret University Reveal</h1>
-      <p class="muted small">Type your dream university and both reveal at the same time.</p>
-    </header>
+  <!-- Animated Background -->
+  <div class="bg-wrapper">
+    <div class="bg-gradient"></div>
+    <div class="bg-dots"></div>
+  </div>
 
-    <main>
-      <section id="lobby" class="card">
-        <div class="row">
-          <button id="createBtn" class="primary">Create Room</button>
-          <input id="joinCode" placeholder="Room code (e.g. AB12)" maxlength="6" />
-          <button id="joinBtn">Join Room</button>
+  <div class="app-container">
+    <!-- Navigation Header -->
+    <nav class="nav-header">
+      <div class="nav-content">
+        <div class="logo">
+          <div class="logo-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 14l9-5-9-5-9 5 9 5z"/>
+              <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+            </svg>
+          </div>
+          <span class="logo-text">DreamUni</span>
         </div>
-        <div class="row">
-          <input id="nameInput" placeholder="Your name (optional)" />
+        <div class="nav-status">
+          <div class="connection-indicator" id="connectionStatus">
+            <div class="status-dot"></div>
+            <span class="status-text">Connecting...</span>
+          </div>
         </div>
-        <p class="muted">Create a room and share the room code or the share button after joining.</p>
+      </div>
+    </nav>
+
+    <main class="main-content">
+      <!-- Welcome Screen -->
+      <section id="welcome" class="screen active">
+        <div class="welcome-hero">
+          <div class="hero-icon">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 14l9-5-9-5-9 5 9 5z"/>
+              <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+            </svg>
+          </div>
+          <h1 class="hero-title">Dream University Reveal</h1>
+          <p class="hero-subtitle">Share your secret dream university with a friend and reveal them simultaneously!</p>
+          
+          <div class="feature-grid">
+            <div class="feature-item">
+              <div class="feature-icon">🎓</div>
+              <div class="feature-text">Secret Sharing</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">⏱️</div>
+              <div class="feature-text">Synchronized Reveal</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">🌍</div>
+              <div class="feature-text">Play Anywhere</div>
+            </div>
+          </div>
+
+          <div class="name-input-section">
+            <div class="input-group">
+              <input id="playerName" type="text" placeholder="Enter your name" class="name-input" maxlength="20" />
+              <div class="input-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button id="createRoomBtn" class="btn btn-primary btn-lg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              Create New Room
+            </button>
+            <button id="joinRoomBtn" class="btn btn-secondary btn-lg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 3h6v6"/>
+                <path d="M21 3l-7 7"/>
+                <path d="M9 21H3v-6"/>
+                <path d="M3 21l7-7"/>
+              </svg>
+              Join Existing Room
+            </button>
+          </div>
+        </div>
       </section>
 
-      <section id="roomArea" class="card hidden">
-        <div class="roomHeader row">
-          <div><strong>Room:</strong> <span id="roomCode">—</span></div>
-          <div class="smallControls">
-            <button id="copyRoomBtn">Copy</button>
-            <button id="shareRoomBtn">Share</button>
-            <button id="leaveBtn" class="danger">Leave</button>
+      <!-- Join Room Screen -->
+      <section id="joinScreen" class="screen">
+        <div class="screen-content">
+          <div class="screen-header">
+            <button class="btn btn-ghost back-btn" id="backToWelcome">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H6m0 0l7 7m-7-7l7-7"/>
+              </svg>
+              Back
+            </button>
+            <h2 class="screen-title">Join Room</h2>
+          </div>
+
+          <div class="join-form">
+            <div class="input-group">
+              <input id="roomCodeInput" type="text" placeholder="Enter room code (e.g., AB12)" class="room-code-input" maxlength="6" />
+              <div class="input-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <circle cx="12" cy="16" r="1"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </div>
+            </div>
+            <button id="joinRoomSubmit" class="btn btn-primary btn-full">
+              Join Room
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14m-7-7l7 7-7 7"/>
+              </svg>
+            </button>
           </div>
         </div>
+      </section>
 
-        <div class="row column">
-          <label for="secretInput" class="muted">Your secret (keeps hidden until both ready)</label>
-          <textarea id="secretInput" placeholder="Type your secret university here"></textarea>
-          <div class="row">
-            <button id="setSecretBtn">Save secret</button>
-            <button id="readyBtn" class="primary" disabled>Ready</button>
-          </div>
-
-          <div id="mySecretBox" class="box small hidden">
-            <div><strong>Your secret:</strong> <span id="mySecretMasked">—</span></div>
-            <div class="row">
-              <button id="toggleShowMySecret">Show</button>
-              <button id="editSecretBtn">Edit</button>
+      <!-- Game Room Screen -->
+      <section id="gameRoom" class="screen">
+        <div class="room-header">
+          <div class="room-info">
+            <div class="room-code-display">
+              <span class="room-label">Room Code:</span>
+              <span class="room-code" id="currentRoomCode">—</span>
+              <button class="btn btn-ghost btn-sm copy-btn" id="copyRoomCode" title="Copy room code">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+              </button>
+            </div>
+            <div class="room-actions">
+              <button class="btn btn-ghost btn-sm" id="shareRoom" title="Share room">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="18" cy="5" r="3"/>
+                  <circle cx="6" cy="12" r="3"/>
+                  <circle cx="18" cy="19" r="3"/>
+                  <path d="M8.59 13.51l6.83 3.98"/>
+                  <path d="M15.41 6.51l-6.82 3.98"/>
+                </svg>
+              </button>
+              <button class="btn btn-danger btn-sm" id="leaveRoom" title="Leave room">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16,17 21,12 16,7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+              </button>
             </div>
           </div>
         </div>
 
-        <div id="status" class="box">
-          <div class="row">
-            <strong>Players</strong>
-            <span class="muted small"> (who is in the room)</span>
+        <!-- Players Status -->
+        <div class="players-section">
+          <h3 class="section-title">Players</h3>
+          <div class="players-grid" id="playersGrid">
+            <!-- Players will be populated here -->
           </div>
-          <ul id="playersList"></ul>
         </div>
 
-        <div id="countdown" class="big hidden">3</div>
+        <!-- Secret Input Section -->
+        <div class="secret-section" id="secretSection">
+          <h3 class="section-title">Your Dream University</h3>
+          <div class="secret-form">
+            <div class="input-group">
+              <textarea 
+                id="secretInput" 
+                placeholder="Enter your dream university... (this will be hidden until both players are ready)"
+                class="secret-textarea"
+                rows="3"
+                maxlength="200"
+              ></textarea>
+              <button class="visibility-toggle" id="toggleSecretVisibility" type="button" title="Toggle visibility">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <div class="character-count">
+              <span id="charCount">0</span>/200 characters
+            </div>
+            <div class="secret-actions">
+              <button id="saveSecret" class="btn btn-secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                  <polyline points="17,21 17,13 7,13 7,21"/>
+                  <polyline points="7,3 7,8 15,8"/>
+                </svg>
+                Save Secret
+              </button>
+              <button id="readyToggle" class="btn btn-primary" disabled>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20,6 9,17 4,12"/>
+                </svg>
+                I'm Ready!
+              </button>
+            </div>
+          </div>
 
-        <div id="revealArea" class="box hidden">
-          <h3>Both revealed:</h3>
-          <ul id="revealList"></ul>
+          <!-- My Secret Display -->
+          <div class="my-secret-display hidden" id="mySecretDisplay">
+            <div class="secret-preview">
+              <div class="secret-label">Your Secret:</div>
+              <div class="secret-text" id="mySecretText">—</div>
+              <div class="secret-preview-actions">
+                <button class="btn btn-ghost btn-sm" id="editSecret">Edit</button>
+                <button class="btn btn-ghost btn-sm" id="togglePreview">Show/Hide</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Waiting State -->
+        <div class="waiting-state hidden" id="waitingState">
+          <div class="waiting-content">
+            <div class="waiting-animation">
+              <div class="pulse-ring"></div>
+              <div class="pulse-ring"></div>
+              <div class="pulse-ring"></div>
+            </div>
+            <h3 class="waiting-title">Waiting for other player...</h3>
+            <p class="waiting-subtitle">Both players need to set their secret and be ready</p>
+          </div>
         </div>
       </section>
 
-      <div id="messages" class="toast muted"></div>
+      <!-- Countdown Screen -->
+      <section id="countdownScreen" class="screen">
+        <div class="countdown-content">
+          <div class="countdown-animation">
+            <div class="countdown-circle">
+              <div class="countdown-number" id="countdownNumber">3</div>
+            </div>
+          </div>
+          <h2 class="countdown-title">Get Ready!</h2>
+          <p class="countdown-subtitle">Both secrets will be revealed in...</p>
+        </div>
+      </section>
+
+      <!-- Reveal Screen -->
+      <section id="revealScreen" class="screen">
+        <div class="reveal-content">
+          <div class="reveal-header">
+            <h2 class="reveal-title">🎉 Dream Universities Revealed!</h2>
+            <p class="reveal-subtitle">Here are your dream destinations:</p>
+          </div>
+          
+          <div class="reveal-cards" id="revealCards">
+            <!-- Reveal cards will be populated here -->
+          </div>
+
+          <div class="reveal-actions">
+            <button class="btn btn-primary btn-lg" id="playAgain">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23,4 23,10 17,10"/>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+              </svg>
+              Play Again
+            </button>
+            <button class="btn btn-secondary btn-lg" id="shareResults">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"/>
+                <circle cx="6" cy="12" r="3"/>
+                <circle cx="18" cy="19" r="3"/>
+                <path d="M8.59 13.51l6.83 3.98"/>
+                <path d="M15.41 6.51l-6.82 3.98"/>
+              </svg>
+              Share Results
+            </button>
+          </div>
+        </div>
+      </section>
     </main>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer">
+      <!-- Toasts will be populated here -->
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p class="loading-text">Connecting...</p>
+      </div>
+    </div>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
